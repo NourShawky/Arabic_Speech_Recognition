@@ -108,12 +108,11 @@ def main(args):
     training_list = np.load(args.train_file, allow_pickle=True)
     training_data, training_labels = np.hsplit(training_list, 2)
 
-    val_list = np.load(val_file, allow_pickle=True)
+    val_list = np.load(args.val_file, allow_pickle=True)
     val_data, val_labels = np.hsplit(val_list, 2)
 
     learning_rate_steps = []
 
-    dropout_keep_prob = args.dropout_keep_prob
 
     log_dir = args.log_dir
 
