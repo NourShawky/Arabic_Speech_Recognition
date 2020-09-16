@@ -6,15 +6,29 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--train_file', default='/home/nour/Quran_challenge/data/train_small.npy')
-parser.add_argument('--val_file', default='/home/nour/Quran_challenge/data/val_small.npy')
-parser.add_argument('--data_dir', default='/home/nour/Quran_challenge/data_preprocessed2/train_set')
-parser.add_argument('--log_dir', default='model_small12')
-parser.add_argument('--pretrained', default='/home/nour/Quran_challenge/model_small11/backup_model.ckpt')
+# Data configs
+parser.add_argument('--train_file', default='data/train_small.npy')
+parser.add_argument('--val_file', default='data/val_small.npy')
+parser.add_argument('--data_dir', default='data_preprocessed/train_set')
+parser.add_argument('--log_dir', default='model', help='The directory of the model saving folder')
+
+# Pretrained model configs
+parser.add_argument('--pretrained', default=None, help='The directory of the pretrained model')
+parser.add_argument('--start_epoch', default=0, type=int, help='The index of starting epoch')
+parser.add_argument('--start_batch', default=0, type=int, help='The index of starting batch')
+
+# Model Hyperparameters
 parser.add_argument('--batch_size', default=8, type=int)
-parser.add_argument('--num_epochs', default=30, type=int)
-parser.add_argument('--opt', default='adam', type=str, help='optimizer type')
-parser.add_argument('--lr', default=0.00001, type=float, help='learning rate')
+parser.add_argument('--num_epochs', default=30, type=int, help='The maximum number of epochs')
+parser.add_argument('--opt', default='adam', type=str, help='optimizer type adam/sgd')
+parser.add_argument('--lr', default=0.001, type=float, help='learning rate')
+parser.add_argument('--momentum', default=0.9, type=float, help='optimizer momentum')
+
+# Model Parameters
+parser.add_argument('--num_layers', default=2, type=int, help='The number of the LSTM layers')
+parser.add_argument('--num_hidden', default=1024, type=int, help='The number of hidden units in the LSTM layer')
+parser.add_argument('--num_classes', default=45, type=int, help='The number of characters used in the training')
+parser.add_argument('--num_features', default=13, type=int, help='The number MFCC extracted features')
 
 def sparse_tuple_from(sequences, dtype=np.int32):
 
@@ -74,14 +88,13 @@ def pad_sequences(sequences, maxlen=None, dtype=np.float32,
             raise ValueError('Padding type "%s" not understood' % padding)
     return x, lengths
 
+
 def unison_shuffled_copies(a, b):
     assert len(a) == len(b)
     p = np.random.permutation(len(a))
     return a[p], b[p]
 
-
-
-
+    
 def load_batch(data, labels, base_dir):
 
     data_list = []
@@ -128,17 +141,17 @@ def main(args):
 
 
     # Some configs
-    num_features = 13
-    num_classes = 45
+    num_features = args.num_features
+    num_classes = args.num_classes
+    num_hidden = args.num_hidden
+    num_layers = args.num_layers
+    is_stack = True
 
     # Hyper-parameters
     num_epochs = args.num_epochs
-    num_hidden = 1024
-    num_layers = 2
-    is_stack = True
     batch_size = args.batch_size
     learning_rate = args.lr
-    momentum = 0.9
+    momentum = args.momentum
 
     num_examples = len(training_data)
     num_batches_per_epoch = num_examples // batch_size
@@ -219,8 +232,8 @@ def main(args):
 
             if args.pretrained:
                 saver.restore(session, args.pretrained)
-                start_batch = 2497
-                start_epoch = 12
+                start_batch = args.start_batch
+                start_epoch = args.start_epoch
 
 
 

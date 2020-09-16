@@ -1,7 +1,6 @@
 import numpy as np
 import librosa
 import math
-import matplotlib.pyplot as plt
 import os
 import python_speech_features as sf
 from sklearn.preprocessing import scale
@@ -36,9 +35,9 @@ def audiofile_to_input_vector(wav_filename):
 def main():
 
     input_dir = 'test_set'
+    output_dir = 'data_preprocessed/' + input_dir
     files = glob(input_dir + '/*')
-    output_dir = 'data_preprocessed2/' + input_dir
-    max_len = 0
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

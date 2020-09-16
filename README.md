@@ -11,3 +11,4 @@ This code is compatible with Python 3.x. You need to install these dependensies 
 * librosa
 * python_speech_features
 * tqdm
+
